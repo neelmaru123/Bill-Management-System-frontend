@@ -7,40 +7,43 @@ import { Select } from 'antd';
 
 
 function AddBill() {
-    const [data, setdata] = new useState({ date: new Date().toISOString().split('T')[0] });
+    const [data, setdata] = new useState({ date: new Date().toISOString().split('T')[0], financialYear : "2023-2024" });
     const [bill, setBill] = useState([]);
     const navigate = useNavigate();
     const [suggestions, setSuggestions] = useState([]);
     const abortController = new AbortController();
 
     useEffect(() => {
-        fetch(api_url+"/bill", { signal: abortController.signal })
-        .then((res) => res.json())
-        .then((data) => {
-            setBill(data);
-        })
-        .catch((error) => {
-            if (error.name === 'AbortError') {
-                console.log('Fetch aborted');
-            } else {
-                // handle error
-            }
-        });
-    
+        fetch(api_url + "/bill", { signal: abortController.signal })
+            .then((res) => res.json())
+            .then((data) => {
+                setBill(data);
+            })
+            .catch((error) => {
+                if (error.name === 'AbortError') {
+                    console.log('Fetch aborted');
+                } else {
+                    // handle error
+                }
+            });
+
         return () => {
             abortController.abort();
         };
     }, []);
-
+    console.log(data.financialYear);
     const Bill = bill.map((e) => {
-        return e.billNo;
+        if (e.financialYear == data.financialYear){
+            return e.billNo;
+        }
     });
+
     console.log(Bill);
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
 
-            if(Bill.includes(data.billNo)){
+            if (Bill.includes(data.billNo)) {
                 toast.error('Bill No already exist');
                 return;
             }
@@ -60,8 +63,8 @@ function AddBill() {
                     amount: data.paidAmount,
                     date: data.date,
                     type: "Credit",
-                    transactionID: "TR01" + Math.floor(Math.random() * 1000),
-                    refNo : data.billNo
+                    transactionID: "TR" + Math.floor(Math.random() * 1000),
+                    refNo: data.billNo
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -78,7 +81,7 @@ function AddBill() {
             if (resData.success === true && transData.success === true) {
                 navigate("/home", { replace: true })
             }
-            else{
+            else {
                 console.log(transData.message);
                 console.log(resData.message);
             }
@@ -96,6 +99,7 @@ function AddBill() {
         setSuggestions(filteredSuggestions);
         setdata({ ...data, companyName: e.target.value })
     };
+
     return (
         <>
             <div className="p-14">
@@ -143,7 +147,7 @@ function AddBill() {
                         </div>
                     </div>
                     <div class="flex flex-wrap -mx-3 mb-6">
-                        <div class="w-full px-3">
+                        <div class="w-full px-3 md:w-3/4">
                             <label class="block uppercase tracking-wide text-theme-dark text-xs font-bold mb-2" for="grid-password">
                                 Product Details
                             </label>
@@ -151,6 +155,20 @@ function AddBill() {
                                 setdata({ ...data, productDetails: e.target.value });
                             }} />
                             <p class="text-gray-600 text-xs italic">Write it in one line </p>
+                        </div>
+                        <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-theme-dark text-xs font-bold mb-2" for="grid-zip">
+                                Fianacial Year
+                            </label>
+
+                            <select class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" onChange={(e) => {
+                                setdata({ ...data, financialYear: e.target.value });
+                            }}>
+                                <option value="">Select Fianacial Year</option>
+                                <option value="2023-2024">2023-2024</option>
+                                <option value="2024-2025">2024-2025</option>
+                            </select>
+
                         </div>
                     </div>
                     <div class="flex flex-wrap -mx-3 mb-2">
@@ -176,7 +194,6 @@ function AddBill() {
                             </label>
                             <input class="appearance-none block w-full bg-gray-200 text-theme-dark border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="number" placeholder="" onChange={(e) => {
                                 var gst = parseFloat(e.target.value) * parseFloat(data.gtsPercent);
-                                console.log(gst);
                                 setdata({ ...data, totalBillAmount: (Number(e.target.value) + Number(gst)), gst: gst, amount: e.target.value });
                             }} />
                         </div>
@@ -186,7 +203,6 @@ function AddBill() {
                             </label>
                             <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="number" placeholder="" onChange={(e) => {
                                 const paidAmount = e.target.value;
-                                console.log(paidAmount, data.totalBillAmount, data.totalBillAmount - paidAmount)
                                 setdata(prevData => ({
                                     ...prevData,
                                     paidAmount: paidAmount,

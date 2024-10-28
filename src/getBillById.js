@@ -1,8 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom"
-import bills from "./data";
 import { useEffect, useState } from "react";
 import api_url from "./api";
-import { ArrowLeft, Cross, CrossIcon, LucideCross } from "lucide-react";
+import { ArrowLeft} from "lucide-react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';

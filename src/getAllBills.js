@@ -15,6 +15,7 @@ function GetAllBills() {
     let [endingDate, setEndingDate] = useState(new Date()); // Today's date
     const [searchTermBillNo, setSearchTermBillNo] = useState('');
     const [searchTermPartyName, setSearchTermPartyName] = useState('');
+    let [financialYear, setFinancialYear] = useState("2024-2025");
     let total = {
         totalBillAmount: 0,
         totalPaidAmount: 0,
@@ -28,45 +29,43 @@ function GetAllBills() {
             .then(data => setdata(data))
             .catch(error => console.log(error))
     }, [])
-
+    console.log(startingDate, endingDate);
 
     let allBill = data
         .filter(bill => bill.billNo.toLowerCase().includes(searchTermBillNo.toLowerCase()))
         .filter(bill => bill.companyName.toLowerCase().includes(searchTermPartyName.toLowerCase()))
         .map((bill) => {
             const day = Math.floor((new Date() - new Date(bill.date)) / (1000 * 60 * 60 * 24));
-            console.log(day);
             let billDate = new Date(bill.date);
-            if (billDate >= startingDate && billDate <= endingDate) {
-                return (
-                    <tr className="bg-slate-200 h-auto hover:bg-theme-dark-shade text-center">
-                        <td className="p-2">{bill.billNo}</td>
-                        <td className="p-2">{new Date(bill.date).toLocaleDateString()}</td>
-                        <td className="p-2">{bill.companyName}</td>
-                        <td className="p-2">{bill.totalBillAmount}</td>
-                        <td className="p-2">{bill.paidAmount}</td>
-                        <td className="p-2">{bill.dueAmount}</td>
-                        <td className="p-2">
-                            <button className="bg-theme-dark p-3 text-theme-light rounded-xl" onClick={() => navigate("/home/" + bill._id, { replace: true })}>View</button>
-                        </td>
-                    </tr>
-                )
-            }
+            // if (billDate >= startingDate && billDate <= endingDate && bill.financialYear == financialYear) {
+            return (
+                <tr className="bg-slate-200 h-auto hover:bg-theme-dark-shade text-center">
+                    <td className="p-2">{bill.billNo}</td>
+                    <td className="p-2">{new Date(bill.date).toLocaleDateString()}</td>
+                    <td className="p-2">{bill.companyName}</td>
+                    <td className="p-2">{bill.totalBillAmount}</td>
+                    <td className="p-2">{bill.paidAmount}</td>
+                    <td className="p-2">{bill.dueAmount}</td>
+                    <td className="p-2">
+                        <button className="bg-theme-dark p-3 text-theme-light rounded-xl" onClick={() => navigate("/home/" + bill._id, { replace: true })}>View</button>
+                    </td>
+                </tr>
+            )
+            // }
         })
-    
-    
+
     data.
-    filter(bill => bill.billNo.toLowerCase().includes(searchTermBillNo.toLowerCase()))
-    .filter(bill => bill.companyName.toLowerCase().includes(searchTermPartyName.toLowerCase()))
-    .forEach((bill) => {
-        let billDate = new Date(bill.date);
-        if (billDate >= startingDate && billDate <= endingDate) {
+        filter(bill => bill.billNo.toLowerCase().includes(searchTermBillNo.toLowerCase()))
+        .filter(bill => bill.companyName.toLowerCase().includes(searchTermPartyName.toLowerCase()))
+        .forEach((bill) => {
+            let billDate = new Date(bill.date);
+            // if (billDate >= startingDate && billDate <= endingDate) {
             total.totalBillAmount += parseInt(bill.totalBillAmount);
             total.totalPaidAmount += parseInt(bill.paidAmount);
             total.totalDueAmount += parseInt(bill.dueAmount);
             total.gst += parseInt(bill.gst);
-        }
-    })
+            // }
+        })
 
 
 
@@ -94,6 +93,29 @@ function GetAllBills() {
                     <div className="items-center align-middle">
                         <label className="block uppercase text-xl tracking-wide text-theme-dark font-bold mb-2 pe-3" htmlFor="grid-password">Ending date :</label>
                         <input className="border rounded-lg text-theme-dark" type="date" onChange={(e) => setEndingDate(new Date(e.target.value))}></input>
+                    </div>
+                    <div className="items-center align-middle">
+                        <label className="block uppercase text-xl tracking-wide text-theme-dark font-bold mb-2 pe-3" htmlFor="grid-password">Fianacial Year : </label>
+                        <select className="border rounded-lg text-theme-dark" onChange={(e) => {
+                            if (e.target.value === "1") {
+                                setStartingDate(new Date(currentDate.getFullYear(), 0, 1));
+                                setEndingDate(new Date(currentDate.getFullYear(), 2, 31));
+                            } else if (e.target.value === "2") {
+                                setStartingDate(new Date(currentDate.getFullYear(), 3, 1));
+                                setEndingDate(new Date(currentDate.getFullYear(), 5, 30));
+                            } else if (e.target.value === "3") {
+                                setStartingDate(new Date(currentDate.getFullYear(), 6, 1));
+                                setEndingDate(new Date(currentDate.getFullYear(), 8, 30));
+                            } else if (e.target.value === "4") {
+                                setStartingDate(new Date(currentDate.getFullYear(), 9, 1));
+                                setEndingDate(new Date(currentDate.getFullYear(), 11, 31));
+                            }
+                        }}>
+                            <option value="1">1st Quater</option>
+                            <option value="2">2nd Quater</option>
+                            <option value="3">3rd Quater</option>
+                            <option value="4">4th Quater</option>
+                        </select>
                     </div>
                 </div>
                 <div className="flex justify-center pb-8">
@@ -126,7 +148,7 @@ function GetAllBills() {
                             </tfoot>
                         </table>
                     </div>
-    
+
                 </div>
             </div>
         </div>

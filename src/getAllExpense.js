@@ -31,7 +31,7 @@ function GetAllExpense(){
         .map((expense) => {
             const day = Math.floor((new Date() - new Date(expense.date)) / (1000 * 60 * 60 * 24));
             let expenseDate = new Date(expense.date);
-            if (expenseDate >= startingDate && expenseDate <= endingDate) {
+            // if (expenseDate >= startingDate && expenseDate <= endingDate) {
                 return (
                     <tr className="bg-slate-200 h-auto hover:bg-theme-dark-shade text-center">
                         <td className="p-2">{expense.expenseNo}</td>
@@ -45,7 +45,7 @@ function GetAllExpense(){
                         </td>
                     </tr>
                 )
-            }
+            // }
         });
 
         console.log(allExpense);

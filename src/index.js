@@ -1,26 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import MainLayout from './mainLayout';
-import Login from './Login';
-import HomeLayout from './homeLayout';
-import GetAllBills from './getAllBills';
-import GetBillById from './getBillById';
-import AddBill from './addBill';
-import EditBill from './editBill';
-import LineChart from './Linechart.js';
 import { registerCharts } from './registerCharts.ts'
-import GetAllExpense from './getAllExpense.js';
-import GetExpenseById from './getExpenseById.js';
-import AddExpense from './addExpense.js';
-import EditExpense from './editExpense.js';
-import BarChart from './barChart.js';
-import GetAllTransaction from './getAllTransactions.js';
-import GetTransactionById from './getTransactionById.js';
-import EditTransaction from './editTransaction.js';
-import ForgetPassword from './forgetPassword.js';
-import ChangePasswod from './changePassword.js';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App.js';
 
